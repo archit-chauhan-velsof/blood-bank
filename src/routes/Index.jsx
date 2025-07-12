@@ -11,7 +11,8 @@ import DonorsBankUser from '../pages/blood-bank-user/DonorsBankUser'
 import BloodBanks from '../pages/user/BloodBanks'
 import DonationRequest from '../pages/user/DonationRequest'
 import SearchDonors from '../pages/user/SearchDonors'
-import MainLayout from '../MainLayout'
+import MainLayout from '../pages/MainLayout'
+import RegisterAsDonor from '../pages/RegisterAsDonor'
 
 
 const RoutesIndex = () => {
@@ -27,6 +28,7 @@ const RoutesIndex = () => {
         <Route path='bloodbanks' element={<BloodBanks/>}/>
         <Route path='donationrequest' element={<DonationRequest/>}/>
         <Route path='searchdonors' element={<SearchDonors/>}/>
+        <Route path='registerasdonor' element={<RegisterAsDonor/>}/>
       </Route>
     </Routes>
   )

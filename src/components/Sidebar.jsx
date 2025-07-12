@@ -34,7 +34,7 @@ const Sidebar = () => {
                         <li>
                             <NavLink to="donorsbankuser"  >
                                 <div className="icon-area">
-                                    <i className="bi bi-chat-left-dots-fill"></i>
+                                    <i class="bi bi-people-fill"></i>
                                 </div>
                                 <p>Donors - B</p>
                             </NavLink>
@@ -50,7 +50,7 @@ const Sidebar = () => {
                         <li>
                             <NavLink to="bloodinventorybankuser"  >
                                 <div className="icon-area">
-                                    <i className="bi bi-chat-left-dots-fill"></i>
+                                    <i class="bi bi-archive-fill"></i>
                                 </div>
                                 <p>Blood Inventory - B</p>
                             </NavLink>
@@ -58,7 +58,7 @@ const Sidebar = () => {
                         <li>
                             <NavLink to="bloodbanksadmin"  >
                                 <div className="icon-area">
-                                    <i className="bi bi-chat-left-dots-fill"></i>
+                                    <i className="bi bi-shield-fill-plus"></i>
                                 </div>
                                 <p>Blood Banks - A</p>
                             </NavLink>
@@ -66,7 +66,7 @@ const Sidebar = () => {
                         <li>
                             <NavLink to="donorsadmin"  >
                                 <div className="icon-area">
-                                    <i className="bi bi-chat-left-dots-fill"></i>
+                                    <i class="bi bi-people-fill"></i>
                                 </div>
                                 <p>Donors - A</p>
                             </NavLink>
@@ -83,7 +83,7 @@ const Sidebar = () => {
                 </nav>
             </div>
             <div className="bottom-section">
-                <NavLink to="./register_donor.html" className="btn btn-red">Register as Donor</NavLink>
+                <NavLink to="registerasdonor" className="btn btn-red">Register as Donor</NavLink>
                 <NavLink to="./index.html" className="btn btn-outline-red">Log out</NavLink>
             </div>
         </>

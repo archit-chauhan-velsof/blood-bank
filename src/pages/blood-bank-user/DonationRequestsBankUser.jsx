@@ -40,6 +40,10 @@ const DonationRequestsBankUser = () => {
                 <td>Uttar Pradesh</td>
                 <td>Noida</td>
                 <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
+                <td className='d-flex gap-3'>
+                  <i class="bi bi-trash3 text-danger"></i>
+                  <i class="bi bi-check2-circle"></i>
+                </td>
               </tr>
               <tr>
                 <td>Kapil Rawat</td>
@@ -48,6 +52,10 @@ const DonationRequestsBankUser = () => {
                 <td>Uttar Pradesh</td>
                 <td>Noida</td>
                 <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
+                <td className='d-flex gap-3'>
+                  <i class="bi bi-trash3 text-danger"></i>
+                  <i class="bi bi-check2-circle"></i>
+                </td>
               </tr>
               <tr>
                 <td>Raj Sinha</td>

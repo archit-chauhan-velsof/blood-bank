@@ -2,8 +2,6 @@ import React from 'react'
 
 const SearchDonors = () => {
   return (
-
-
     <div className="content-wrapper">
 
       <div className="container-fluid">
@@ -77,10 +75,6 @@ const SearchDonors = () => {
 
 
     </div>
-
-
-
-
   )
 }
 

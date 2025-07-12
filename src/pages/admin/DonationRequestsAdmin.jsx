@@ -8,14 +8,9 @@ const DonationRequestsAdmin = () => {
       <div className="container-fluid">
 
         <div className="heading-area">
-          <h1 className="page-title">Donors</h1>
+          <h1 className="page-title">Donation Requests</h1>
           <div className="action-area">
-            <div className="item">
-              <label htmlFor="city">City</label>
-              <select name="city" id="city" className="form-select form-select-sm">
-                <option value="">None Selected</option>
-              </select>
-            </div>
+            <button className='px-5 my-4 btn btn-success'>Export</button>
           </div>
         </div>
 

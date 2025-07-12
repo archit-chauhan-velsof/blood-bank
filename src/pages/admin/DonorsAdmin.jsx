@@ -10,12 +10,7 @@ const DonorsAdmin = () => {
         <div className="heading-area">
           <h1 className="page-title">Donors</h1>
           <div className="action-area">
-            <div className="item">
-              <label htmlFor="city">City</label>
-              <select name="city" id="city" className="form-select form-select-sm">
-                <option value="">None Selected</option>
-              </select>
-            </div>
+            <button className='px-5 my-4 btn btn-success'>Export</button>
           </div>
         </div>
 
@@ -40,10 +35,9 @@ const DonorsAdmin = () => {
                 <td>Uttar Pradesh</td>
                 <td>Noida</td>
                 <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
+                <td className='d-flex gap-3'>
+                  <i class="bi bi-trash3 text-danger"></i>
+                  <i class="bi bi-pencil-square"></i>
                 </td>
               </tr>
               <tr>
@@ -53,10 +47,9 @@ const DonorsAdmin = () => {
                 <td>Uttar Pradesh</td>
                 <td>Noida</td>
                 <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
+                <td className='d-flex gap-3'>
+                  <i class="bi bi-trash3 text-danger"></i>
+                  <i class="bi bi-pencil-square"></i>
                 </td>
               </tr>
               <tr>

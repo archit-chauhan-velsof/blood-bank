@@ -40,10 +40,11 @@ const DonorsBankUser = () => {
                 <td>Uttar Pradesh</td>
                 <td>Noida</td>
                 <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
+                <td className='d-flex gap-3'>
+                  <i class="bi bi-trash3 text-danger"></i>
+                  <i class="bi bi-check2-circle"></i>
+                  <i class="bi bi-pencil-square"></i>
+
                 </td>
               </tr>
               <tr>

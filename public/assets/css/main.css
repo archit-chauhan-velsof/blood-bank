@@ -54,6 +54,12 @@ img {
 
 /* /RESET CSS */
 /* COMMON CSS */
+
+.action-button-success{
+  background-color: #25b800;
+  color: #fff;
+}
+
 .form-group {
   margin-bottom: 15px;
 }

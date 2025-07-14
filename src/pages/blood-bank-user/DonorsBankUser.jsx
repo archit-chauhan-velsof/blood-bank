@@ -1,7 +1,18 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { axiosInstance } from '../../config';
 
 const DonorsBankUser = () => {
+  const [donors, setDonors] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    axiosInstance.get(`donors`).then((res) => {
+      console.log(res.data.data);
+      setDonors(res.data.data);
+    }).catch((err) => console.log(err)).finally(() => setLoading(false));
+  }, [])
   return (
     <div className="content-wrapper">
 
@@ -23,121 +34,35 @@ const DonorsBankUser = () => {
           <table className="table">
             <thead>
               <tr>
-                <td>Donor Name</td>
-                <td>Blood Group</td>
-                <td>Contact Number</td>
-                <td>State</td>
-                <td>City</td>
-                <td>Address</td>
-                <td>Action</td>
+                  <td>Donor Name</td>
+                  <td>Blood Group</td>
+                  <td>Contact Number</td>
+                  <td>Email</td>
+                  <td>Gender</td>
+                  <td>Action</td>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Rajesh Arora</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td className='d-flex gap-3'>
-                  <i class="bi bi-trash3 text-danger"></i>
-                  <i class="bi bi-check2-circle"></i>
-                  <i class="bi bi-pencil-square"></i>
+              {
+                donors?.map((e) => {
+                  return (
+                    <tr key={e.id}>
+                      <td>{e?.attributes?.name}</td>
+                      <td>{e?.attributes?.blood_group}</td>
+                      <td>{e?.attributes?.mobile_number}</td>
+                      <td>{e?.attributes?.email}</td>
+                      <td>{e?.attributes?.gender}</td>
+                      <td className='d-flex gap-3'>
+                        <i className="bi bi-trash3 text-danger"></i>
+                        {/* <i className={`bi bi-check2-circle font-weight-bold text-white rounded-circle px-1 ${e?.attributes?.approved==='No'?'bg-success':'bg-secondary'}`} onClick={e?.attributes?.approved==='No' && ()=>{}}></i> */}
+                        <i className="bi bi-pencil-square"></i>
 
-                </td>
-              </tr>
-              <tr>
-                <td>Kapil Rawat</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Raj Sinha</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Vineet Singh</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Nikhil</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Raj Kishore</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Shivam</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Prashant</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
+                      </td>
+                    </tr>
+                  )
+                })
+              }
+              
             </tbody>
           </table>
         </div>

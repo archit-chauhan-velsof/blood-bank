@@ -2,24 +2,22 @@ import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Loading from '../../components/Loading'
+import { axiosInstance } from '../../config';
 
 const BloodBanks = () => {
-    let token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNzUyMjM4NzU1LCJleHAiOjE3NTQ4MzA3NTV9.93nJksEbCpHozBkRnJYyQ8hIX4GMIlVvSl8o50o5QWw'
     const [loading, setLoading] = useState(false);
     const [bloodBanks, setBloodBanks] = useState([]);
     useEffect(() => {
         setLoading(true);
-        axios.get(`https://bloodbank.veldev.com/api/blood-banks`, {
-            headers: {
-                'Authorization': 'Bearer ' + token
-            }
-        }).then((res) => {
-            console.log(res.data.data);
+        axiosInstance.get(`blood-banks`).then((res) => {
+            // console.log(res.data.data);
             setBloodBanks(res?.data?.data)
-        }).catch((err) => console.log(err));
-        setLoading(false);
+        }).catch((err) => console.log(err)).finally(()=>{
+
+            setLoading(false);
+        })
     }, [])
-    
+
 
     return (
         <>
@@ -79,18 +77,6 @@ const BloodBanks = () => {
                                         })
                                     }
 
-                                    <tr>
-                                        <td>AIIMS</td>
-                                        <td>9876543210</td>
-                                        <td>City 1</td>
-                                        <td>New Delhi</td>
-                                        <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                                        <td>
-                                            <Link to="#" className="img-icon">
-                                                <img src="assets/images/question-icon.svg" alt="User" />
-                                            </Link>
-                                        </td>
-                                    </tr>
                                 </tbody>
                             </table>
                         </div>

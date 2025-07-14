@@ -1,4 +1,17 @@
 import React from 'react'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
+import * as Yup from 'yup'
+import { axiosInstance } from '../../config';
+
+const validationSchema = Yup.object({
+  full_name: Yup.string().required('Name is required'),
+  mobile: Yup.string().matches(/^\d{10}$/, 'Phone number must have exactly 10 digits').required('Contact Number is required'),
+  email: Yup.string().email('Invalid email format').required('Email is required'),
+  // state: Yup.string().required('State is required'),
+  // city: Yup.string().required('City is required'),
+  blood_group: Yup.string().required('Blood group is required'),
+  medical_condition: Yup.string().required('Medical Condition is required')
+});
 
 const DonationRequest = () => {
   return (
@@ -14,80 +27,121 @@ const DonationRequest = () => {
         <div className="container px-0">
           <div className="card">
             <div className="card-body">
-              <form>
 
-
-                <div className="container form-container">
-                  <div className="row">
-                    <div className="col-12">
-                      <div className="form-group">
-                        <label for="full_name">Full Name</label>
-                        <input type="text" name="full_name" id="full_name"
-                          className="form-control" placeholder="Full Name" />
+              <Formik
+                initialValues={{
+                  full_name: '',
+                  mobile: '',
+                  email: '',
+                  // state: '',
+                  // city: '',
+                  blood_group: '',
+                  medical_condition: '',
+                }}
+                validationSchema={validationSchema}
+                onSubmit={(values) => {
+                  console.log(values);
+                  axiosInstance.post(`donations`, {
+                    data: {
+                      name: values.full_name,
+                      blood_group: values.blood_group,
+                      email: values.email,
+                      contact_number: values.mobile,
+                      medical_condition_description: values.medical_condition
+                    }
+                  }).then((res) => console.log(res)).catch((err) => console.log(err));
+                }}
+              >
+                <Form>
+                  <div className="container form-container">
+                    <div className="row">
+                      <div className="col-12">
+                        <div className="form-group">
+                          <label htmlFor="full_name">Full Name</label>
+                          <Field type="text" name="full_name" id="full_name"
+                            className="form-control" placeholder="Full Name" />
+                          <ErrorMessage name='full_name' component='small' className='text-danger' />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="col-lg-6">
-                      <div className="form-group">
-                        <label for="mobile">Mobile Number</label>
-                        <input type="number" name="mobile" id="mobile" className="form-control"
-                          placeholder="Mobile Number" />
-                      </div>
-                    </div>
-                    <div className="col-lg-6">
-                      <div className="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" name="email" id="email" className="form-control"
-                          placeholder="Email" />
-                      </div>
-                    </div>
+                      <div className="col-lg-6">
+                        <div className="form-group">
+                          <label htmlFor="mobile">Mobile Number</label>
+                          <Field type="number" name="mobile" id="mobile" className="form-control"
+                            placeholder="Mobile Number" />
+                          <ErrorMessage name='mobile' component='small' className='text-danger' />
 
-                    <div className="col-lg-6">
-                      <div className="form-group">
-                        <label for="state">State</label>
-                        <select name="state" id="state" className="form-select">
-                          <option value="">-- State --</option>
-                        </select>
+                        </div>
                       </div>
-                    </div>
-                    <div className="col-lg-6">
-                      <div className="form-group">
-                        <label for="city">City</label>
-                        <select name="city" id="city" className="form-select">
-                          <option value="">-- City --</option>
-                        </select>
+                      <div className="col-lg-6">
+                        <div className="form-group">
+                          <label htmlFor="email">Email</label>
+                          <Field type="email" name="email" id="email" className="form-control"
+                            placeholder="Email" />
+                          <ErrorMessage name='email' component='small' className='text-danger' />
+
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="col-lg-6">
-                      <div className="form-group">
-                        <label for="blood_group">Blood Group</label>
-                        <select name="blood_group" id="blood_group" className="form-select">
-                          <option value="1">A+</option>
-                          <option value="1">A-</option>
-                          <option value="1">B+</option>
-                          <option value="1">B-</option>
-                        </select>
+                      {/* <div className="col-lg-6">
+                        <div className="form-group">
+                          <label htmlFor="state">State</label>
+                          <Field as='select' name="state" id="state" className="form-select">
+                            <option value="">-- State --</option>
+                          </Field>
+                            <ErrorMessage name='state' component='small' className='text-danger'/>
+                          
+                        </div>
+                      </div> */}
+                      {/* <div className="col-lg-6">
+                        <div className="form-group">
+                          <label htmlFor="city">City</label>
+                          <Field as='select' name="city" id="city" className="form-select">
+                            <option value="">-- City --</option>
+                          </Field>
+                            <ErrorMessage name='city' component='small' className='text-danger'/>
+
+                        </div>
+                      </div> */}
+
+                      <div className="col-lg-6">
+                        <div className="form-group">
+                          <label htmlFor="blood_group">Blood Group</label>
+                          <Field as='select' name="blood_group" id="blood_group" className="form-select">
+                            <option value="">Select a Blood Group</option>
+                            <option value="A+ (A Positive)">A+</option>
+                            <option value="A- (A Negative)">A-</option>
+                            <option value="B+ (B Positive)">B+</option>
+                            <option value="B- (B Negative)">B-</option>
+                            <option value="O+ (O Positive)">O+</option>
+                            <option value="O- (O Negative)">O-</option>
+                            <option value="AB+ (AB Positive)">AB+</option>
+                            <option value="AB- (AB Negative)">AB-</option>
+                          </Field>
+                          <ErrorMessage name='blood_group' component='small' className='text-danger' />
+
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="col-12">
-                      <div className="form-group">
-                        <label for="medical_condition">Medical Condition Description</label>
-                        <textarea name="medical_condition" id="medical_condition" rows="3"
-                          placeholder="Medical Condition Description"
-                          className="form-control"></textarea>
+                      <div className="col-12">
+                        <div className="form-group">
+                          <label htmlFor="medical_condition">Medical Condition Description</label>
+                          <Field as='textarea' name="medical_condition" id="medical_condition" rows="3"
+                            placeholder="Medical Condition Description"
+                            className="form-control" />
+                          <ErrorMessage name='medical_condition' component='small' className='text-danger' />
+                        </div>
                       </div>
-                    </div>
 
-                    <div className="col-12">
-                      <button className="btn btn-red px-5 my-4">Submit</button>
-                    </div>
+                      <div className="col-12">
+                        <button className="btn btn-red px-5 my-4" type='submit'>Submit</button>
+                      </div>
 
+                    </div>
                   </div>
-                </div>
 
-              </form>
+                </Form>
+              </Formik>
             </div>
           </div>
         </div>

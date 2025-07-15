@@ -44,7 +44,7 @@ const Sidebar = () => {
                                 <div className="icon-area">
                                     <i className="bi bi-chat-left-dots-fill"></i>
                                 </div>
-                                <p>Donation Request - B</p>
+                                <p>Donation Requests - B</p>
                             </NavLink>
                         </li>
                         <li>

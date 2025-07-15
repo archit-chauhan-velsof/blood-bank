@@ -20,7 +20,7 @@ const BloodInventoryBankUser = () => {
     setLoading(true);
     axiosInstance.get(`blood-inventories`).then((res) => {
       setInventoryData(res.data.data);
-      console.log(res.data.data);
+      // console.log(res.data.data);
     }).catch((err) => console.log(err)).finally(() =>
       setLoading(false)
     )

@@ -1,7 +1,27 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { axiosInstance } from '../../config';
+import Loading from '../../components/Loading';
 
 const DonorsAdmin = () => {
+  const [donors, setDonors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [reload, setReload] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    axiosInstance.get(`donors`).then((res) => {
+      setDonors(res.data.data);
+    }).catch((err) => console.log(err)).finally(() => setLoading(false));
+  }, [reload])
+
+
+  let handleDelete = (id) => {
+    setLoading(true);
+    axiosInstance.delete(`donors/${id}`).then(() =>
+      setReload(!reload)
+    ).catch((err) => console.log(err)).finally(()=>setLoading(false));
+  }
   return (
     <div className="content-wrapper">
 
@@ -14,144 +34,69 @@ const DonorsAdmin = () => {
           </div>
         </div>
 
-        <div className="table-responsive">
-          <table className="table">
-            <thead>
-              <tr>
-                <td>Donor Name</td>
-                <td>Blood Group</td>
-                <td>Contact Number</td>
-                <td>State</td>
-                <td>City</td>
-                <td>Address</td>
-                <td>Action</td>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Rajesh Arora</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td className='d-flex gap-3'>
-                  <i class="bi bi-trash3 text-danger"></i>
-                  <i class="bi bi-pencil-square"></i>
-                </td>
-              </tr>
-              <tr>
-                <td>Kapil Rawat</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td className='d-flex gap-3'>
-                  <i class="bi bi-trash3 text-danger"></i>
-                  <i class="bi bi-pencil-square"></i>
-                </td>
-              </tr>
-              <tr>
-                <td>Raj Sinha</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Vineet Singh</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Nikhil</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Raj Kishore</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Shivam</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>Prashant</td>
-                <td>O+</td>
-                <td>9876543210</td>
-                <td>Uttar Pradesh</td>
-                <td>Noida</td>
-                <td>E 23, Sector 63 Rd, E Block, Sector 63, Noida</td>
-                <td>
-                  <Link to="#" className="img-icon">
-                    <img src="assets/images/question-icon.svg" alt="User" />
-                  </Link>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {
+          loading && <Loading />
+        }
 
-        <nav aria-label="Page navigation" className="pagination-nav">
-          <ul className="pagination">
-            <li className="page-item">
-              <Link className="page-link" to="#" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
-              </Link>
-            </li>
-            <li className="page-item"><Link className="page-link active" to="#">1</Link></li>
-            <li className="page-item"><Link className="page-link" to="#">2</Link></li>
-            <li className="page-item"><Link className="page-link" to="#">3</Link></li>
-            <li className="page-item"><Link className="page-link" to="#">4</Link></li>
-            <li className="page-item">
-              <Link className="page-link" to="#" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
-              </Link>
-            </li>
-          </ul>
-        </nav>
+        {
+          !loading && (
+            <>
+              <div className="table-responsive">
+                <table className="table">
+                  <thead>
+                    <tr>
+                      <td>Donor Name</td>
+                      <td>Blood Group</td>
+                      <td>Contact Number</td>
+                      <td>Email</td>
+                      <td>Gender</td>
+                      <td>Action</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {
+                      donors?.map((e) => {
+                        return (
+                          <tr key={e.id}>
+                            <td>{e?.attributes?.name}</td>
+                            <td>{e?.attributes?.blood_group}</td>
+                            <td>{e?.attributes?.mobile_number}</td>
+                            <td>{e?.attributes?.email}</td>
+                            <td>{e?.attributes?.gender}</td>
+                            <td className='d-flex gap-3'>
+                              <i className="bi bi-trash3 text-danger" onClick={() => handleDelete(e.id)}></i>
+                              <i className={`bi bi-pencil-square`}></i>
+
+                            </td>
+                          </tr>
+                        )
+                      })
+                    }
+
+                  </tbody>
+                </table>
+              </div>
+
+              <nav aria-label="Page navigation" className="pagination-nav">
+                <ul className="pagination">
+                  <li className="page-item">
+                    <Link className="page-link" to="#" aria-label="Previous">
+                      <span aria-hidden="true">&laquo;</span>
+                    </Link>
+                  </li>
+                  <li className="page-item"><Link className="page-link active" to="#">1</Link></li>
+                  <li className="page-item"><Link className="page-link" to="#">2</Link></li>
+                  <li className="page-item"><Link className="page-link" to="#">3</Link></li>
+                  <li className="page-item"><Link className="page-link" to="#">4</Link></li>
+                  <li className="page-item">
+                    <Link className="page-link" to="#" aria-label="Next">
+                      <span aria-hidden="true">&raquo;</span>
+                    </Link>
+                  </li>
+                </ul>
+              </nav>
+            </>
+          )}
 
       </div>
 

@@ -1,37 +1,68 @@
-import React from 'react'
-import { Router, Routes, Route } from 'react-router-dom'
-import Login from '../pages/login/Index'
-import Register from '../pages/register/Index'
-import BloodBanksAdmin from '../pages/admin/BloodbanksAdmin'
-import DonationRequestsAdmin from '../pages/admin/DonationRequestsAdmin'
-import DonorsAdmin from '../pages/admin/DonorsAdmin'
-import BloodInventoryBankUser from '../pages/blood-bank-user/BloodInventoryBankUser'
-import DonationRequestsBankUser from '../pages/blood-bank-user/DonationRequestsBankUser'
-import DonorsBankUser from '../pages/blood-bank-user/DonorsBankUser'
-import BloodBanks from '../pages/user/BloodBanks'
-import DonationRequest from '../pages/user/DonationRequest'
-import SearchDonors from '../pages/user/SearchDonors'
-import MainLayout from '../pages/MainLayout'
-import RegisterAsDonor from '../pages/RegisterAsDonor'
+import React, { lazy, Suspense } from "react";
+import { Router, Routes, Route } from "react-router-dom";
+import BloodBanks from "../pages/user/BloodBanks";
+import DonationRequest from "../pages/user/DonationRequest";
+import SearchDonors from "../pages/user/SearchDonors";
+import MainLayout from "../pages/main/MainLayout";
+import RegisterAsDonor from "../pages/user/RegisterAsDonor";
+import Loading from "../components/Loading";
+import {
+  BLOOD_BANKS_ADMIN_URL,
+  DONATION_REQUEST_ADMIN_URL,
+  DONORS_ADMIN_URL,
+  BLOOD_INVENTORY_BANK_USER_URL,
+  DONATION_REQUESTS_BANK_USER_URL,
+  DONORS_BANK_USER_URL,
+  BLOOD_BANKS_URL,
+  DONATION_REQUEST_URL,
+  SEARCH_DONORS_URL,
+  REGISTER_AS_DONOR_URL,
+} from "./url_constant";
 
+const BloodBanksAdmin = lazy(() => import("../pages/admin/BloodbanksAdmin"));
+const DonationRequestsAdmin = lazy(() =>
+  import("../pages/admin/DonationRequestsAdmin")
+);
+const DonorsAdmin = lazy(() => import("../pages/admin/DonorsAdmin"));
+const BloodInventoryBankUser = lazy(() =>
+  import("../pages/blood-bank-user/BloodInventoryBankUser")
+);
+const DonationRequestsBankUser = lazy(() =>
+  import("../pages/blood-bank-user/DonationRequestsBankUser")
+);
+const DonorsBankUser = lazy(() =>
+  import("../pages/blood-bank-user/DonorsBankUser")
+);
 
 const AppRoutes = () => {
   return (
-    <Routes>
-      <Route path="/" element={<MainLayout />}>
-        <Route path='bloodbanksadmin' element={<BloodBanksAdmin/>}/>
-        <Route path='donationrequestadmin' element={<DonationRequestsAdmin/>}/>
-        <Route path='donorsadmin' element={<DonorsAdmin/>}/>
-        <Route path='bloodinventorybankuser' element={<BloodInventoryBankUser/>}/>
-        <Route path='donationrequestsbankuser' element={<DonationRequestsBankUser/>}/>
-        <Route path='donorsbankuser' element={<DonorsBankUser/>}/>
-        <Route path='bloodbanks' element={<BloodBanks/>}/>
-        <Route path='donationrequest' element={<DonationRequest/>}/>
-        <Route path='searchdonors' element={<SearchDonors/>}/>
-        <Route path='registerasdonor' element={<RegisterAsDonor/>}/>
-      </Route>
-    </Routes>
-  )
-}
+    <Suspense fallback={<Loading />}>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          <Route path={BLOOD_BANKS_ADMIN_URL} element={<BloodBanksAdmin />} />
+          <Route
+            path={DONATION_REQUEST_ADMIN_URL}
+            element={<DonationRequestsAdmin />}
+          />
+          <Route path={DONORS_ADMIN_URL} element={<DonorsAdmin />} />
+          <Route
+            path={BLOOD_INVENTORY_BANK_USER_URL}
+            element={<BloodInventoryBankUser />}
+          />
+          <Route
+            path={DONATION_REQUESTS_BANK_USER_URL}
+            element={<DonationRequestsBankUser />}
+          />
+          <Route path={DONORS_BANK_USER_URL} element={<DonorsBankUser />} />
+          <Route path={BLOOD_BANKS_URL} element={<BloodBanks />} />
+          <Route path={DONATION_REQUEST_URL} element={<DonationRequest />} />
+          <Route path={SEARCH_DONORS_URL} element={<SearchDonors />} />
+          <Route path={REGISTER_AS_DONOR_URL} element={<RegisterAsDonor />} />
+        </Route>
+        <Route path="*" element={<MainLayout />} />
+      </Routes>
+    </Suspense>
+  );
+};
 
-export default AppRoutes
+export default AppRoutes;

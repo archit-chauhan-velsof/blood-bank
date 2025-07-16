@@ -1,0 +1,27 @@
+export const bloodBankName_required = "Blood Bank Name is required";
+export const mobile_required = "Mobile Number is required";
+export const mobile_valid = "Mobile Number must have exactly 10 digits";
+export const email_required = "Email is required";
+export const email_valid = "Invalid email format";
+export const addressLine_required = "Address Line is required";
+export const state_required = "State is required";
+export const district_required = "District is required";
+export const city_required = "City is required";
+export const bloodBankType_required = "Type of Blood Bank is required";
+export const license_reqired = "License/certification is required";
+export const bloodGroup_required = "Blood Group is required";
+export const fullName_required = "Name is required";
+export const gender_required = "Gender is required";
+export const bloodQuantity_required = "Quantity is required";
+export const bloodQuantity_positive = "Quantity must be greater than 0";
+export const dateOfCollection_required = "Date of collection is required";
+export const userId_required = "User ID is required";
+export const password_required = "Password is required";
+export const password_minLength = "Password should be atleast of 5 characters";
+export const role_required = "Users role is required";
+export const medicalCondition_required = "Medical condition is required";
+export const dob_required = "Date of Birth is required";
+export const donationDate_required = "Date of Donation is required";
+export const preference_required = "Preference is required";
+export const donatedPreviously_required =
+  "Previous donation record is required";

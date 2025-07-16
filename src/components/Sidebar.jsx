@@ -1,7 +1,11 @@
 import React from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
+import useToken from '../custom-hooks/useToken';
 
 const Sidebar = () => {
+      const { resetToken } = useToken();
+      const Navigate = useNavigate();
+    
     return (
         <>
             <div className="middle-section">
@@ -23,8 +27,8 @@ const Sidebar = () => {
                                 <p>Search Donors - U</p>
                             </NavLink>
                         </li>
-                        <li>
-                            <NavLink to="donationrequest"  >
+                        <li  className="border-bottom border-3">
+                            <NavLink to="donationrequest" >
                                 <div className="icon-area">
                                     <i className="bi bi-chat-left-dots-fill"></i>
                                 </div>
@@ -47,7 +51,7 @@ const Sidebar = () => {
                                 <p>Donation Requests - B</p>
                             </NavLink>
                         </li>
-                        <li>
+                        <li className="border-bottom border-3">
                             <NavLink to="bloodinventorybankuser"  >
                                 <div className="icon-area">
                                     <i className="bi bi-archive-fill"></i>
@@ -84,7 +88,7 @@ const Sidebar = () => {
             </div>
             <div className="bottom-section">
                 <NavLink to="registerasdonor" className="btn btn-red">Register as Donor</NavLink>
-                <NavLink to="./index.html" className="btn btn-outline-red">Log out</NavLink>
+                <button to="./index.html" className="btn btn-outline-red" onClick={()=>{resetToken(); Navigate('/')}}>Log out</button>
             </div>
         </>
     )

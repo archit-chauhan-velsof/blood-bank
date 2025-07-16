@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { axiosInstance } from '../../config';
 import Loading from '../../components/Loading';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const DonorsAdmin = () => {
   const [donors, setDonors] = useState([]);
@@ -20,7 +22,34 @@ const DonorsAdmin = () => {
     setLoading(true);
     axiosInstance.delete(`donors/${id}`).then(() =>
       setReload(!reload)
-    ).catch((err) => console.log(err)).finally(()=>setLoading(false));
+    ).catch((err) => console.log(err)).finally(() => setLoading(false));
+  }
+
+
+  let exportDonor = () => {
+    setLoading(true);
+    axiosInstance.get(`export-donor`).then((res) => {
+      // console.log(res.data)
+      let apiData = res.data;
+      apiData = apiData.split('\n');
+
+      let dataAoa = [];
+
+      apiData.map((e) => {
+        dataAoa.push(e.split(','));
+      })
+
+      console.log(dataAoa);
+
+
+      const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(blob, 'donors.xlsx');
+    }
+    ).catch((err) => console.log(err)).finally(() => setLoading(false));
   }
   return (
     <div className="content-wrapper">
@@ -30,7 +59,7 @@ const DonorsAdmin = () => {
         <div className="heading-area">
           <h1 className="page-title">Donors</h1>
           <div className="action-area">
-            <button className='px-5 my-4 btn btn-success'>Export</button>
+            <button className='px-5 my-4 btn btn-success' onClick={() => exportDonor()}>Export</button>
           </div>
         </div>
 

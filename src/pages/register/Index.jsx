@@ -133,7 +133,7 @@ const Register = () => {
                         </Formik>
 
                         <div className="auth-bottom-area">
-                            <p>Already have an account? <a href="./index.html" className="btn btn-link">Login</a></p>
+                            <p>Already have an account? <Link to="/" className="btn btn-link">Login</Link></p>
                         </div>
                     </div>
                 </div>

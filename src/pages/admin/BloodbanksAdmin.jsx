@@ -4,6 +4,8 @@ import { axiosInstance, token } from '../../config';
 import Loading from '../../components/Loading';
 import { Form, Field, ErrorMessage, Formik } from 'formik';
 import * as Yup from 'yup';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const validationSchema = Yup.object({
     blood_bank_name: Yup.string().required('Name is required'),
@@ -31,7 +33,6 @@ const BloodBanksAdmin = () => {
     useEffect(() => {
         setLoading(true);
         axiosInstance.get(`blood-banks`).then((res) => {
-            console.log(res.data.data);
             setBloodBanks(res?.data?.data)
         }).catch((err) => console.log(err)).finally(() => {
 
@@ -53,7 +54,6 @@ const BloodBanksAdmin = () => {
     }, []);
 
     const handleSubmit = (values) => {
-        console.log('Submitted', values);
         axiosInstance.post(`blood-banks`, {
             data: {
                 name: values.blood_bank_name,
@@ -76,6 +76,33 @@ const BloodBanksAdmin = () => {
             setReload(!reload)
         ).catch((err) => console.log(err)).finally(() => setLoading(false));
     }
+
+    let exportBloodBanks = () => {
+          setLoading(true);
+          axiosInstance.get(`export-blood-bank`).then((res) => {
+            // console.log(res.data)
+            let apiData = res.data;
+            apiData = apiData.split('\n');
+      
+            let dataAoa=[];
+      
+            apiData.map((e)=>{
+              dataAoa.push(e.split(','));
+            })
+      
+            console.log(dataAoa);
+          
+      
+            const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+            const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+            saveAs(blob, 'blood-banks.xlsx');
+          }
+          ).catch((err) => console.log(err)).finally(() => setLoading(false));
+        }
+
     return (
         <>
 
@@ -91,7 +118,7 @@ const BloodBanksAdmin = () => {
                                     <h1 className="page-title">Blood Banks</h1>
                                     <div className="action-area">
                                         <div className='item'>
-                                            <button className='px-5 my-4 btn btn-success'>Export</button>
+                                            <button className='px-5 my-4 btn btn-success' onClick={()=> exportBloodBanks()}>Export</button>
                                         </div>
                                         <button className='px-5 my-4 btn btn-danger' onClick={() => setAddBloodBank(true)}>Add Blood Bank</button>
                                     </div>

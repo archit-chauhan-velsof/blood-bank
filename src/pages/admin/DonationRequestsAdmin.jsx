@@ -2,6 +2,8 @@ import { React, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { axiosInstance } from '../../config';
 import Loading from '../../components/Loading';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const DonationRequestsAdmin = () => {
 
@@ -13,7 +15,6 @@ const DonationRequestsAdmin = () => {
   useEffect(() => {
     setLoading(true);
     axiosInstance.get(`donations`).then((res) => {
-      console.log(res.data.data);
       setDonations(res.data.data);
     }).catch((err) => console.log(err)).finally(() => setLoading(false));
   }, [reload]);
@@ -22,6 +23,32 @@ const DonationRequestsAdmin = () => {
   let handleDetails = (e) => {
     setShowDetails(e);
     console.log(e);
+  }
+
+  let exportDonations = () => {
+    setLoading(true);
+    axiosInstance.get(`export-donations`).then((res) => {
+      // console.log(res.data)
+      let apiData = res.data;
+      apiData = apiData.split('\n');
+
+      let dataAoa = [];
+
+      apiData.map((e) => {
+        dataAoa.push(e.split(','));
+      })
+
+      console.log(dataAoa);
+
+
+      const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+      const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+      saveAs(blob, 'donations.xlsx');
+    }
+    ).catch((err) => console.log(err)).finally(() => setLoading(false));
   }
 
   return (
@@ -35,7 +62,7 @@ const DonationRequestsAdmin = () => {
             <div className="heading-area">
               <h1 className="page-title">Donation Requests</h1>
               <div className="action-area">
-                <button className='px-5 my-4 btn btn-success'>Export</button>
+                <button className='px-5 my-4 btn btn-success' onClick={()=>exportDonations()}>Export</button>
               </div>
             </div>
           )}
@@ -67,7 +94,7 @@ const DonationRequestsAdmin = () => {
                             <td onClick={() => handleDetails(e)}>{e?.attributes?.contact_number}</td>
                             <td onClick={() => handleDetails(e)}>{e?.attributes?.email}</td>
                             <td onClick={() => handleDetails(e)}>{e?.attributes?.blood_group}</td>
-                           
+
                           </tr>
                         )
                       })
@@ -114,16 +141,16 @@ const DonationRequestsAdmin = () => {
                     <div>Blood Group : {showDetails?.attributes.blood_group}</div>
                     <div>Medical Condition Description : {showDetails?.attributes.medical_condition_description}</div>
                     <div className='d-flex gap-3'>
-                      <button type="button" className={`btn ${showDetails?.attributes?.approved === null ? 'bg-success text-white' : 'bg-secondary'}`} onClick={()=>handleApprove(showDetails.id)}>
+                      <button type="button" className={`btn ${showDetails?.attributes?.approved === null ? 'bg-success text-white' : 'bg-secondary'}`} onClick={() => handleApprove(showDetails.id)}>
                         Accept
                       </button>
-                      <button type="button" className='btn btn-danger' onClick={()=>handleDelete(showDetails.id)}>
+                      <button type="button" className='btn btn-danger' onClick={() => handleDelete(showDetails.id)}>
                         Discard
                       </button>
                     </div>
                   </div>
                 </div>
-                <div className="position-absolute bottom-100 end-0 fw-bold fs-3 px-2 bg-secondary rounded-circle" onClick={()=>setShowDetails(null)}>
+                <div className="position-absolute bottom-100 end-0 fw-bold fs-3 px-2 bg-secondary rounded-circle" onClick={() => setShowDetails(null)}>
                   x
                 </div>
               </div>

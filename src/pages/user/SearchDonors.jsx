@@ -32,10 +32,8 @@ const SearchDonors = () => {
   });
 
   const handleSubmit = (values) => {
-    console.log('Selected Values:', values);
     setLoading(true);
     axiosInstance.get(`donors?populate=${values.state}&populate=${values.district}&populate=${values.city}`).then((res) => {
-      console.log(res.data.data);
       setShowResults(true);
       setSearchResults(res.data.data);
     }).catch((err) => console.log(err)).finally(() => setLoading(false));

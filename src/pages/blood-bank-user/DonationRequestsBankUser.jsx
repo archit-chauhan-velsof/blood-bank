@@ -2,6 +2,8 @@ import { React, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { axiosInstance } from '../../config';
 import Loading from '../../components/Loading';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
 
 const DonationRequestsBankUser = () => {
 
@@ -13,14 +15,12 @@ const DonationRequestsBankUser = () => {
   useEffect(() => {
     setLoading(true);
     axiosInstance.get(`donations`).then((res) => {
-      console.log(res.data.data);
       setDonations(res.data.data);
     }).catch((err) => console.log(err)).finally(() => setLoading(false));
   }, [reload]);
 
 
   let handleApprove = (id) => {
-    // console.log('aprroved ', id);
     setLoading(true);
     axiosInstance.put(`approve-donations/${id}`).then(() =>
       setReload(!reload)
@@ -37,8 +37,33 @@ const DonationRequestsBankUser = () => {
 
   let handleDetails = (e) => {
     setShowDetails(e);
-    console.log(e);
   }
+
+  let exportDonations = () => {
+      setLoading(true);
+      axiosInstance.get(`export-donations`).then((res) => {
+        // console.log(res.data)
+        let apiData = res.data;
+        apiData = apiData.split('\n');
+  
+        let dataAoa=[];
+  
+        apiData.map((e)=>{
+          dataAoa.push(e.split(','));
+        })
+  
+        console.log(dataAoa);
+      
+  
+        const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+        const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+        const blob = new Blob([excelBuffer], { type: 'application/octet-stream' });
+        saveAs(blob, 'donations.xlsx');
+      }
+      ).catch((err) => console.log(err)).finally(() => setLoading(false));
+    }
 
   return (
     <div className="content-wrapper">
@@ -51,7 +76,7 @@ const DonationRequestsBankUser = () => {
             <div className="heading-area">
               <h1 className="page-title">Donation Requests</h1>
               <div className="action-area">
-                <button className='px-5 my-4 btn btn-success'>Export</button>
+                <button className='px-5 my-4 btn btn-success' onClick={()=> exportDonations()}>Export</button>
               </div>
             </div>
           )}

@@ -39,8 +39,7 @@ const RegisterAsDonor = () => {
     }, []);
 
     const handleSubmit = (values) => {
-        console.log(agree);
-        console.log('Values', values);
+       
         axiosInstance.post(`donors`,{
             data:{
                 name:values.full_name,

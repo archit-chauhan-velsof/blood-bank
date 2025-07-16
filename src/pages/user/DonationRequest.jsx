@@ -40,7 +40,6 @@ const DonationRequest = () => {
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
-                  console.log(values);
                   axiosInstance.post(`donations`, {
                     data: {
                       name: values.full_name,

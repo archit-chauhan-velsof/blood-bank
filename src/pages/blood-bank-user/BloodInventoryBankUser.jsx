@@ -20,7 +20,6 @@ const BloodInventoryBankUser = () => {
     setLoading(true);
     axiosInstance.get(`blood-inventories`).then((res) => {
       setInventoryData(res.data.data);
-      // console.log(res.data.data);
     }).catch((err) => console.log(err)).finally(() =>
       setLoading(false)
     )
@@ -95,7 +94,6 @@ const BloodInventoryBankUser = () => {
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
-                  console.log(values);
                   axiosInstance.post(`blood-inventories`,{
                     data:{
                       blood_group:values.blood_group,

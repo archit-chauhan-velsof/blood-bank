@@ -10,7 +10,6 @@ const BloodBanks = () => {
     useEffect(() => {
         setLoading(true);
         axiosInstance.get(`blood-banks`).then((res) => {
-            // console.log(res.data.data);
             setBloodBanks(res?.data?.data)
         }).catch((err) => console.log(err)).finally(()=>{
 

@@ -15,7 +15,7 @@ import MainLayout from '../pages/MainLayout'
 import RegisterAsDonor from '../pages/RegisterAsDonor'
 
 
-const RoutesIndex = () => {
+const AppRoutes = () => {
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
@@ -34,4 +34,4 @@ const RoutesIndex = () => {
   )
 }
 
-export default RoutesIndex
+export default AppRoutes

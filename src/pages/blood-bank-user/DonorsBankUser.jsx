@@ -4,11 +4,25 @@ import { axiosInstance } from '../../config';
 import Loading from '../../components/Loading';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
+import axios from 'axios';
+
+const validationSchema = Yup.object({
+  full_name: Yup.string().required('Name is required'),
+  gender: Yup.string().required('Gender is required'),
+  blood_group: Yup.string().required('Blood Group is required'),
+  mobile: Yup.string().matches(/^\d{10}$/, 'Phone number must have exactly 10 digits').required('Contact Number is required'),
+  email: Yup.string().email('Invalid email format').required('Email is required'),
+})
+
+
 
 const DonorsBankUser = () => {
   const [donors, setDonors] = useState([]);
   const [loading, setLoading] = useState(false);
   const [reload, setReload] = useState(false);
+  const [edit, setEdit] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -38,14 +52,14 @@ const DonorsBankUser = () => {
       let apiData = res.data;
       apiData = apiData.split('\n');
 
-      let dataAoa=[];
+      let dataAoa = [];
 
-      apiData.map((e)=>{
+      apiData.map((e) => {
         dataAoa.push(e.split(','));
       })
 
       console.log(dataAoa);
-    
+
 
       const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
       const workbook = XLSX.utils.book_new();
@@ -55,6 +69,26 @@ const DonorsBankUser = () => {
       saveAs(blob, 'donors.xlsx');
     }
     ).catch((err) => console.log(err)).finally(() => setLoading(false));
+  }
+
+  let handleSubmit = (values) => {
+    console.log(values,edit);
+    axiosInstance.put(`donors/${edit.id}`,{
+      data:{
+        name:values.full_name,
+        gender:values.gender,
+        date_of_birth:edit.attributes.date_of_birth,
+        blood_group:values.blood_group,
+        email:values.email,
+        mobile_number:values.mobile,
+        last_date_of_donation:edit.attributes.last_date_of_donation,
+        preference:edit.attributes.preference,
+        donated_previously:edit.attributes.donated_previously,
+        medical_condition:edit.attributes.medical_condition,
+        agree_to_connect:edit.attributes.agree_to_connect
+      }
+      
+    }).then((res)=>{setEdit(false); setReload(!reload)}).catch((err)=>console.log(err));
   }
 
   return (
@@ -74,7 +108,7 @@ const DonorsBankUser = () => {
         }
 
         {
-          !loading && (
+          !loading && !edit && (
             <>
               <div className="table-responsive">
                 <table className="table">
@@ -101,7 +135,7 @@ const DonorsBankUser = () => {
                             <td className='d-flex gap-3'>
                               <i className="bi bi-trash3 text-danger" onClick={() => handleDelete(e.id)}></i>
                               <i className={`bi bi-check2-circle font-weight-bold text-white rounded-circle px-1 ${e?.attributes?.approved === 'No' ? 'bg-success' : 'bg-secondary'}`} onClick={e?.attributes?.approved === 'No' ? () => handleApprove(e.id) : undefined}></i>
-                              <i className={`bi bi-pencil-square`}></i>
+                              <i className={`bi bi-pencil-square`} onClick={() => setEdit(e)}></i>
 
                             </td>
                           </tr>
@@ -133,6 +167,101 @@ const DonorsBankUser = () => {
               </nav>
             </>
           )}
+
+        {
+          edit && (
+            <Formik
+              initialValues={{
+                full_name: edit.attributes.name,
+                gender: edit.attributes.gender,
+                blood_group: edit.attributes.blood_group,
+                mobile: edit.attributes.mobile_number,
+                email: edit.attributes.email
+              }}
+              validationSchema={validationSchema}
+              onSubmit={handleSubmit}
+            >
+              <Form>
+
+
+                <div className="container form-container">
+                  <div className="row">
+                    <h6 className="my-3 w-100">Personal Details</h6>
+
+                    <div className="col-lg-8">
+                      <div className="form-group">
+                        <label htmlFor="full_name">Full Name</label>
+                        <Field type="text" name="full_name" id="full_name"
+                          className="form-control" placeholder="Full Name" />
+                        <ErrorMessage name='full_name' component="small" className='text-danger' />
+                      </div>
+                    </div>
+                    <div className="col-lg-4">
+                      <div className="form-group">
+                        <label htmlFor="gender">Gender</label>
+                        <Field as='select' name="gender" id="gender" className="form-select">
+
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Others">Other</option>
+                        </Field>
+                        <ErrorMessage name='gender' component="small" className='text-danger' />
+
+                      </div>
+                    </div>
+
+
+
+                    <div className="col-lg-6">
+                      <div className="form-group">
+                        <label htmlFor="blood_group">Blood Group</label>
+                        <Field as='select' name="blood_group" id="blood_group" className="form-select">
+                          <option value="A+ (A Positive)">A+</option>
+                          <option value="A- (A Negative)">A-</option>
+                          <option value="B+ (B Positive)">B+</option>
+                          <option value="B- (B Negative)">B-</option>
+                          <option value="O+ (O Positive)">O+</option>
+                          <option value="O- (O Negative)">O-</option>
+                          <option value="AB+ (AB Positive)">AB+</option>
+                          <option value="AB- (AB Negative)">AB-</option>
+                        </Field>
+                        <ErrorMessage name='blood_group' component="small" className='text-danger' />
+
+                      </div>
+                    </div>
+
+                    <h6 className="my-3 w-100">Contact Details</h6>
+
+                    <div className="col-lg-6">
+                      <div className="form-group">
+                        <label htmlFor="mobile">Mobile Number</label>
+                        <Field type="number" name="mobile" id="mobile" className="form-control" placeholder="Mobile Number" />
+                        <ErrorMessage name='mobile' component="small" className='text-danger' />
+
+                      </div>
+                    </div>
+                    <div className="col-lg-6">
+                      <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <Field type="email" name="email" id="email" className="form-control" placeholder="Email" />
+                        <ErrorMessage name='email' component="small" className='text-danger' />
+
+                      </div>
+                    </div>
+
+
+                    <div className="col-12 d-flex gap-2">
+                      <button className="btn btn-success px-5 my-4" type='submit'>Submit</button>
+                      <button className="btn btn-danger px-5 my-4" onClick={() => setEdit(false)}>Close</button>
+                    </div>
+
+                  </div>
+                </div>
+
+              </Form>
+            </Formik>
+          )
+        }
 
       </div>
 

@@ -6,7 +6,6 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
-import axios from 'axios';
 
 const validationSchema = Yup.object({
   full_name: Yup.string().required('Name is required'),
@@ -72,23 +71,23 @@ const DonorsBankUser = () => {
   }
 
   let handleSubmit = (values) => {
-    console.log(values,edit);
-    axiosInstance.put(`donors/${edit.id}`,{
-      data:{
-        name:values.full_name,
-        gender:values.gender,
-        date_of_birth:edit.attributes.date_of_birth,
-        blood_group:values.blood_group,
-        email:values.email,
-        mobile_number:values.mobile,
-        last_date_of_donation:edit.attributes.last_date_of_donation,
-        preference:edit.attributes.preference,
-        donated_previously:edit.attributes.donated_previously,
-        medical_condition:edit.attributes.medical_condition,
-        agree_to_connect:edit.attributes.agree_to_connect
+    // console.log(values,edit);
+    axiosInstance.put(`donors/${edit.id}`, {
+      data: {
+        name: values.full_name,
+        gender: values.gender,
+        date_of_birth: edit.attributes.date_of_birth,
+        blood_group: values.blood_group,
+        email: values.email,
+        mobile_number: values.mobile,
+        last_date_of_donation: edit.attributes.last_date_of_donation,
+        preference: edit.attributes.preference,
+        donated_previously: edit.attributes.donated_previously,
+        medical_condition: edit.attributes.medical_condition,
+        agree_to_connect: edit.attributes.agree_to_connect
       }
-      
-    }).then((res)=>{setEdit(false); setReload(!reload)}).catch((err)=>console.log(err));
+
+    }).then((res) => { setEdit(false); setReload(!reload) }).catch((err) => console.log(err));
   }
 
   return (

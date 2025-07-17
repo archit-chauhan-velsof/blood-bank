@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../../config";
 import Loading from "../../components/Loading";
+import { searchDonors_Schema } from "../../schemas/donors";
 const SearchDonors = () => {
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -13,7 +14,7 @@ const SearchDonors = () => {
   const [showResults, setShowResults] = useState(false);
 
   // Load states as soon as page loads
-  useEffect(() => {
+  const getStates = () => {
     setLoading(true);
     axiosInstance
       .get(`states`)
@@ -22,14 +23,10 @@ const SearchDonors = () => {
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
+  };
+  useEffect(() => {
+    getStates();
   }, []);
-
-  const validationSchema = Yup.object({
-    state: Yup.string().required("State is required"),
-    district: Yup.string().required("District is required"),
-    city: Yup.string().required("City is required"),
-    blood_group: Yup.string().required("Blood group is required"),
-  });
 
   const handleSubmit = (values) => {
     setLoading(true);
@@ -65,7 +62,7 @@ const SearchDonors = () => {
                     city: "",
                     blood_group: "",
                   }}
-                  validationSchema={validationSchema}
+                  validationSchema={searchDonors_Schema}
                   onSubmit={handleSubmit}
                 >
                   {({ values, setFieldValue }) => {

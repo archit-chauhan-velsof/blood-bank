@@ -5,32 +5,11 @@ import Loading from "../../components/Loading";
 import { Form, Field, ErrorMessage, Formik } from "formik";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import { addBloodBank_Schema, editBloodBank_Schema } from "../../schemas/bloodBank";
-
-// const addBloodBank_Schema = Yup.object({
-//   blood_bank_name: Yup.string().required("Name is required"),
-//   mobile: Yup.string()
-//     .matches(/^\d{10}$/, mobile_valid)
-//     .required(mobile_required),
-//   email: Yup.string().email(email_valid).required(email_required),
-//   address_line: Yup.string().required(addressLine_required),
-//   state: Yup.string().required(state_required),
-//   district: Yup.string().required(district_required),
-//   city: Yup.string().required(city_required),
-//   blood_bank_type: Yup.string().required(bloodBankType_required),
-//   license: Yup.string().required(license_reqired),
-//   blood_group: Yup.string().required(bloodGroup_required),
-// });
-
-// const editBloodBank_Schema = Yup.object({
-//   blood_bank_name: Yup.string().required(bloodBankName_required),
-//   mobile: Yup.string()
-//     .matches(/^\d{10}$/, mobile_valid)
-//     .required(mobile_required),
-//   email: Yup.string().email(email_valid).required(email_required),
-//   address_line: Yup.string().required(addressLine_required),
-//   blood_bank_type: Yup.string().required(bloodBankType_required),
-// });
+import {
+  addBloodBank_Schema,
+  editBloodBank_Schema,
+} from "../../schemas/bloodBank";
+import { exportExcel } from "../../utils/ExportExcel";
 
 const BloodBanksAdmin = () => {
   const [states, setStates] = useState([]);
@@ -40,9 +19,9 @@ const BloodBanksAdmin = () => {
   const [addBloodBank, setAddBloodBank] = useState(false);
   const [reload, setReload] = useState(false);
   const [edit, setEdit] = useState(null);
-  // const
   const [loading, setLoading] = useState(false);
-  useEffect(() => {
+
+  const getBloodBanks =  () => {
     setLoading(true);
     axiosInstance
       .get(`blood-banks`)
@@ -53,9 +32,9 @@ const BloodBanksAdmin = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [reload]);
+  };
 
-  useEffect(() => {
+  const getStates =  () => {
     setLoading(true);
     axiosInstance
       .get(`states`)
@@ -64,8 +43,8 @@ const BloodBanksAdmin = () => {
       })
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
-  }, []);
-
+  };
+  
   const handleSubmit = (values) => {
     axiosInstance
       .post(`blood-banks`, {
@@ -97,56 +76,46 @@ const BloodBanksAdmin = () => {
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };
+  
+    const exportBloodBanks = () => {
+      setLoading(true);
+      axiosInstance
+        .get(`export-blood-bank`)
+        .then((res) => {
+            exportExcel(res.data,'blood-banks')
+        })
+        .catch((err) => console.log(err))
+        .finally(() => setLoading(false));
+    };
+  
+    const handleEdit = (values) => {
+      console.log("values for edit are ", values, edit);
+      axiosInstance
+        .put(`blood-banks/${edit.id}`, {
+          data: {
+            name: values.blood_bank_name,
+            phone_number: values.mobile,
+            email: values.email,
+            address: values.address,
+            blood_bank_type: values.blood_bank_type,
+          },
+        })
+        .then((res) => {
+          setEdit(false);
+          setReload(!reload);
+        })
+        .catch((err) => console.log(err));
+    };
+    
 
-  const exportBloodBanks = () => {
-    setLoading(true);
-    axiosInstance
-      .get(`export-blood-bank`)
-      .then((res) => {
-        // console.log(res.data)
-        let apiData = res.data;
-        apiData = apiData.split("\n");
+  useEffect(() => {
+    getBloodBanks();
+  }, [reload]);
 
-        let dataAoa = [];
+  useEffect(() => {
+    getStates();
+  }, []);
 
-        apiData.map((e) => {
-          dataAoa.push(e.split(","));
-        });
-
-        const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        const excelBuffer = XLSX.write(workbook, {
-          bookType: "xlsx",
-          type: "array",
-        });
-        const blob = new Blob([excelBuffer], {
-          type: "application/octet-stream",
-        });
-        saveAs(blob, "blood-banks.xlsx");
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setLoading(false));
-  };
-
-  const handleEdit = (values) => {
-    console.log("values for edit are ", values, edit);
-    axiosInstance
-      .put(`blood-banks/${edit.id}`, {
-        data: {
-          name: values.blood_bank_name,
-          phone_number: values.mobile,
-          email: values.email,
-          address: values.address,
-          blood_bank_type: values.blood_bank_type,
-        },
-      })
-      .then((res) => {
-        setEdit(false);
-        setReload(!reload);
-      })
-      .catch((err) => console.log(err));
-  };
 
   return (
     <>

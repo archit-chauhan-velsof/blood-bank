@@ -44,3 +44,10 @@ export const registerDonor_Schema = Yup.object({
   donated_previously: Yup.string().required(donatedPreviously_required),
   agree: Yup.string(),
 });
+
+ export const searchDonors_Schema = Yup.object({
+    state: Yup.string().required(state_required),
+    district: Yup.string().required(district_required),
+    city: Yup.string().required(city_required),
+    blood_group: Yup.string().required(bloodGroup_required),
+  });

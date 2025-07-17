@@ -6,26 +6,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { editDonors_Schema } from "../../schemas/donors";
-// import * as Yup from "yup";
-// import {
-//   bloodGroup_required,
-//   email_required,
-//   email_valid,
-//   fullName_required,
-//   gender_required,
-//   mobile_required,
-//   mobile_valid,
-// } from "../../messages/messages";
-
-// const editDonors_Schema = Yup.object({
-//   full_name: Yup.string().required(fullName_required),
-//   gender: Yup.string().required(gender_required),
-//   blood_group: Yup.string().required(bloodGroup_required),
-//   mobile: Yup.string()
-//     .matches(/^\d{10}$/, mobile_valid)
-//     .required(mobile_required),
-//   email: Yup.string().email(email_valid).required(email_required),
-// });
+import { exportExcel } from "../../utils/ExportExcel";
 
 const DonorsAdmin = () => {
   const [donors, setDonors] = useState([]);
@@ -33,7 +14,7 @@ const DonorsAdmin = () => {
   const [reload, setReload] = useState(false);
   const [edit, setEdit] = useState(null);
 
-  useEffect(() => {
+  const getDonors = () => {
     setLoading(true);
     axiosInstance
       .get(`donors`)
@@ -42,7 +23,7 @@ const DonorsAdmin = () => {
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
-  }, [reload]);
+  };
 
   const handleDelete = (id) => {
     setLoading(true);
@@ -59,26 +40,7 @@ const DonorsAdmin = () => {
       .get(`export-donor`)
       .then((res) => {
         // console.log(res.data)
-        let apiData = res.data;
-        apiData = apiData.split("\n");
-
-        let dataAoa = [];
-
-        apiData.map((e) => {
-          dataAoa.push(e.split(","));
-        });
-
-        const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        const excelBuffer = XLSX.write(workbook, {
-          bookType: "xlsx",
-          type: "array",
-        });
-        const blob = new Blob([excelBuffer], {
-          type: "application/octet-stream",
-        });
-        saveAs(blob, "donors.xlsx");
+        exportExcel(res.data,'donors');
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -108,6 +70,10 @@ const DonorsAdmin = () => {
       })
       .catch((err) => console.log(err));
   };
+
+  useEffect(() => {
+    getDonors();
+  }, [reload]);
 
   return (
     <div className="content-wrapper">

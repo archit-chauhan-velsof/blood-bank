@@ -5,18 +5,22 @@ import * as Yup from "yup";
 import { axiosInstanceWithoutToken } from "../../config";
 import { SIGNUP_URL } from "../../routes/url_constant";
 import { loginSchema } from "../../schemas/loginAndRegister";
-// import {
-//   password_minLength,
-//   password_required,
-//   userId_required,
-// } from "../../messages/messages";
-
-// const loginSchema = Yup.object().shape({
-//   user_id: Yup.string().required(userId_required),
-//   password: Yup.string().required(password_required).min(5, password_minLength),
-// });
 
 const Login = ({ setToken }) => {
+  
+  const handleLogin = (values) => {
+    const formData = new FormData();
+    formData.append("identifier", values.user_id);
+    formData.append("password", values.password);
+    axiosInstanceWithoutToken
+      .post(`auth/local`, formData)
+      .then((res) => {
+        console.log(res.data);
+        setToken(res.data.jwt);
+        // Navigate('/bloodbanksadmin');
+      })
+      .catch((err) => console.log(err));
+  };
   const Navigate = useNavigate();
   return (
     <div className="auth-body">
@@ -31,21 +35,7 @@ const Login = ({ setToken }) => {
             <Formik
               initialValues={{ user_id: "", password: "" }}
               validationSchema={loginSchema}
-              onSubmit={(values) => {
-                console.log("form submitted", values);
-                // API Logic
-                const formData = new FormData();
-                formData.append("identifier", values.user_id);
-                formData.append("password", values.password);
-                axiosInstanceWithoutToken
-                  .post(`auth/local`, formData)
-                  .then((res) => {
-                    console.log(res.data);
-                    setToken(res.data.jwt);
-                    // Navigate('/bloodbanksadmin');
-                  })
-                  .catch((err) => console.log(err));
-              }}
+              onSubmit={handleLogin}
             >
               {({ handleSubmit }) => (
                 <form onSubmit={handleSubmit}>

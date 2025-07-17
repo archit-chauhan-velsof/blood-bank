@@ -1,29 +1,23 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-// import * as Yup from "yup";
 import { axiosInstance } from "../../config";
 import { donationRequest_Schema } from "../../schemas/donation";
-// import {
-//   bloodGroup_required,
-//   email_required,
-//   email_valid,
-//   fullName_required,
-//   medicalCondition_required,
-//   mobile_required,
-//   mobile_valid,
-// } from "../../messages/messages";
-
-// const donationRequest_Schema = Yup.object({
-//   full_name: Yup.string().required(fullName_required),
-//   mobile: Yup.string()
-//     .matches(/^\d{10}$/, mobile_valid)
-//     .required(mobile_required),
-//   email: Yup.string().email(email_valid).required(email_required),
-//   blood_group: Yup.string().required(bloodGroup_required),
-//   medical_condition: Yup.string().required(medicalCondition_required),
-// });
 
 const DonationRequest = () => {
+  const handleSubmit = (values) => {
+    axiosInstance
+      .post(`donations`, {
+        data: {
+          name: values.full_name,
+          blood_group: values.blood_group,
+          email: values.email,
+          contact_number: values.mobile,
+          medical_condition_description: values.medical_condition,
+        },
+      })
+      .then((res) => console.log(res))
+      .catch((err) => console.log(err));
+  };
   return (
     <div className="content-wrapper">
       <div className="container-fluid">
@@ -40,26 +34,11 @@ const DonationRequest = () => {
                   full_name: "",
                   mobile: "",
                   email: "",
-                  // state: '',
-                  // city: '',
                   blood_group: "",
                   medical_condition: "",
                 }}
                 validationSchema={donationRequest_Schema}
-                onSubmit={(values) => {
-                  axiosInstance
-                    .post(`donations`, {
-                      data: {
-                        name: values.full_name,
-                        blood_group: values.blood_group,
-                        email: values.email,
-                        contact_number: values.mobile,
-                        medical_condition_description: values.medical_condition,
-                      },
-                    })
-                    .then((res) => console.log(res))
-                    .catch((err) => console.log(err));
-                }}
+                onSubmit={handleSubmit}
               >
                 <Form>
                   <div className="container form-container">
@@ -116,27 +95,6 @@ const DonationRequest = () => {
                           />
                         </div>
                       </div>
-
-                      {/* <div className="col-lg-6">
-                        <div className="form-group">
-                          <label htmlFor="state">State</label>
-                          <Field as='select' name="state" id="state" className="form-select">
-                            <option value="">-- State --</option>
-                          </Field>
-                            <ErrorMessage name='state' component='small' className='text-danger'/>
-                          
-                        </div>
-                      </div> */}
-                      {/* <div className="col-lg-6">
-                        <div className="form-group">
-                          <label htmlFor="city">City</label>
-                          <Field as='select' name="city" id="city" className="form-select">
-                            <option value="">-- City --</option>
-                          </Field>
-                            <ErrorMessage name='city' component='small' className='text-danger'/>
-
-                        </div>
-                      </div> */}
 
                       <div className="col-lg-6">
                         <div className="form-group">

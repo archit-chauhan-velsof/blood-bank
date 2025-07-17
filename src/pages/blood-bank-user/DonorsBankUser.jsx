@@ -2,31 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../../config";
 import Loading from "../../components/Loading";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { editDonors_Schema } from "../../schemas/donors";
-
-// import * as Yup from "yup";
-// import {
-//   bloodGroup_required,
-//   email_required,
-//   email_valid,
-//   fullName_required,
-//   gender_required,
-//   mobile_required,
-//   mobile_valid,
-// } from "../../messages/messages";
-
-// const editDonors_Schema = Yup.object({
-//   full_name: Yup.string().required(fullName_required),
-//   gender: Yup.string().required(gender_required),
-//   blood_group: Yup.string().required(bloodGroup_required),
-//   mobile: Yup.string()
-//     .matches(/^\d{10}$/, mobile_valid)
-//     .required(mobile_required),
-//   email: Yup.string().email(email_valid).required(email_required),
-// });
+import { exportExcel } from "../../utils/ExportExcel";
 
 const DonorsBankUser = () => {
   const [donors, setDonors] = useState([]);
@@ -34,7 +12,7 @@ const DonorsBankUser = () => {
   const [reload, setReload] = useState(false);
   const [edit, setEdit] = useState(null);
 
-  useEffect(() => {
+  const getDonors = () => {
     setLoading(true);
     axiosInstance
       .get(`donors`)
@@ -43,6 +21,10 @@ const DonorsBankUser = () => {
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    getDonors();
   }, [reload]);
 
   const handleApprove = (id) => {
@@ -68,27 +50,7 @@ const DonorsBankUser = () => {
     axiosInstance
       .get(`export-donor`)
       .then((res) => {
-        // console.log(res.data)
-        let apiData = res.data;
-        apiData = apiData.split("\n");
-
-        let dataAoa = [];
-
-        apiData.map((e) => {
-          dataAoa.push(e.split(","));
-        });
-
-        const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        const excelBuffer = XLSX.write(workbook, {
-          bookType: "xlsx",
-          type: "array",
-        });
-        const blob = new Blob([excelBuffer], {
-          type: "application/octet-stream",
-        });
-        saveAs(blob, "donors.xlsx");
+        exportExcel(res.data, "donors");
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -228,11 +190,11 @@ const DonorsBankUser = () => {
         {edit && (
           <Formik
             initialValues={{
-              full_name: edit.attributes.name,
-              gender: edit.attributes.gender,
-              blood_group: edit.attributes.blood_group,
-              mobile: edit.attributes.mobile_number,
-              email: edit.attributes.email,
+              full_name: edit?.attributes?.name,
+              gender: edit?.attributes?.gender,
+              blood_group: edit?.attributes?.blood_group,
+              mobile: edit?.attributes?.mobile_number,
+              email: edit?.attributes?.email,
             }}
             validationSchema={editDonors_Schema}
             onSubmit={handleSubmit}

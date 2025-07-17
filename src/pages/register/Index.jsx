@@ -5,44 +5,31 @@ import * as Yup from "yup";
 import { axiosInstance, axiosInstanceWithoutToken } from "../../config";
 import { LOGIN_URL } from "../../routes/url_constant";
 import { registerSchema } from "../../schemas/loginAndRegister";
-// import {
-//   addressLine_required,
-//   city_required,
-//   email_required,
-//   email_valid,
-//   fullName_required,
-//   gender_required,
-//   mobile_required,
-//   mobile_valid,
-//   password_minLength,
-//   password_required,
-//   role_required,
-// } from "../../messages/messages";
-
-// const registerSchema = Yup.object().shape({
-//   name: Yup.string().required(fullName_required),
-//   gender: Yup.string().required(gender_required),
-//   email: Yup.string().email(email_valid).required(email_required),
-//   phone: Yup.string()
-//     .matches(/^\d{10}$/, mobile_valid)
-//     .required(mobile_required),
-//   city: Yup.string().required(city_required),
-//   address: Yup.string().required(addressLine_required),
-//   password: Yup.string().min(5, password_minLength).required(password_required),
-//   role: Yup.string().required(role_required),
-// });
 
 const Register = () => {
   const Navigate = useNavigate();
-  // const [cities,setCities] = useState([]);
 
-  // useEffect(() => {
-  //     axiosInstance.get(`/cities`)
-  //         .then((res) => {
-  //             setCities(res.data.data);
-  //             setFieldValue('city', '');
-  //         }).catch((err) => console.error(err));
-  // }, [])
+  const handleRegister = (values) => {
+    // API Logic
+    let formData = new FormData();
+    formData.append("email", values.email);
+    formData.append("username", values.name);
+    formData.append("password", values.password);
+    formData.append("name", values.name);
+    formData.append("gender", values.gender);
+    formData.append("contact_number", values.phone);
+    formData.append("city", values.city);
+    formData.append("address", values.address);
+    formData.append("role", values.role);
+    axiosInstanceWithoutToken
+      .post("register", formData)
+      .then((res) => {
+        console.log(res.data);
+        Navigate("/");
+      })
+      .catch((err) => console.log(err));
+  };
+
   return (
     <div className="auth-body">
       <div className="auth-wrapper">
@@ -63,27 +50,7 @@ const Register = () => {
                 password: "",
               }}
               validationSchema={registerSchema}
-              onSubmit={(values) => {
-                console.log("Registered:", values);
-                // API Logic
-                let formData = new FormData();
-                formData.append("email", values.email);
-                formData.append("username", values.name);
-                formData.append("password", values.password);
-                formData.append("name", values.name);
-                formData.append("gender", values.gender);
-                formData.append("contact_number", values.phone);
-                formData.append("city", values.city);
-                formData.append("address", values.address);
-                formData.append("role", values.role);
-                axiosInstanceWithoutToken
-                  .post("register", formData)
-                  .then((res) => {
-                    console.log(res.data);
-                    Navigate("/");
-                  })
-                  .catch((err) => console.log(err));
-              }}
+              onSubmit={handleRegister}
             >
               {({ handleSubmit }) => (
                 <form onSubmit={handleSubmit}>

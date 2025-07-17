@@ -7,7 +7,8 @@ import { axiosInstance } from "../../config";
 const BloodBanks = () => {
   const [loading, setLoading] = useState(false);
   const [bloodBanks, setBloodBanks] = useState([]);
-  useEffect(() => {
+
+  const getBloodBanks = () => {
     setLoading(true);
     axiosInstance
       .get(`blood-banks`)
@@ -18,6 +19,10 @@ const BloodBanks = () => {
       .finally(() => {
         setLoading(false);
       });
+  };
+  
+  useEffect(() => {
+    getBloodBanks();
   }, []);
 
   return (

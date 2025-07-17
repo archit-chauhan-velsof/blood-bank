@@ -3,21 +3,6 @@ import { axiosInstance } from "../../config";
 import Loading from "../../components/Loading";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { addInventory_Schema } from "../../schemas/bloodInventory";
-// import * as Yup from "yup";
-// import {
-//   bloodGroup_required,
-//   bloodQuantity_positive,
-//   bloodQuantity_required,
-//   dateOfCollection_required,
-// } from "../../messages/messages";
-
-// const addInventory_Schema = Yup.object({
-//   blood_group: Yup.string().required(bloodGroup_required),
-//   quantity: Yup.number()
-//     .positive(bloodQuantity_positive)
-//     .required(bloodQuantity_required),
-//   doc: Yup.date().required(dateOfCollection_required),
-// });
 
 const BloodInventoryBankUser = () => {
   const [loading, setLoading] = useState(false);
@@ -25,7 +10,7 @@ const BloodInventoryBankUser = () => {
   const [inventoryData, setInventoryData] = useState([]);
   const [reload, setReload] = useState(false);
 
-  useEffect(() => {
+  const getBloodInventories = () => {
     setLoading(true);
     axiosInstance
       .get(`blood-inventories`)
@@ -34,6 +19,26 @@ const BloodInventoryBankUser = () => {
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
+  };
+
+  const handleSubmit = (values) => {
+    axiosInstance
+      .post(`blood-inventories`, {
+        data: {
+          blood_group: values.blood_group,
+          quantity: values.quantity,
+          date_of_collection: values.doc,
+        },
+      })
+      .then((res) => {
+        setReload(!reload);
+        setShowAdd(false);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getBloodInventories();
   }, [reload]);
 
   return (
@@ -100,21 +105,7 @@ const BloodInventoryBankUser = () => {
                   doc: "",
                 }}
                 validationSchema={addInventory_Schema}
-                onSubmit={(values) => {
-                  axiosInstance
-                    .post(`blood-inventories`, {
-                      data: {
-                        blood_group: values.blood_group,
-                        quantity: values.quantity,
-                        date_of_collection: values.doc,
-                      },
-                    })
-                    .then((res) => {
-                      setReload(!reload);
-                      setShowAdd(false);
-                    })
-                    .catch((err) => console.log(err));
-                }}
+                onSubmit={handleSubmit}
               >
                 <Form>
                   <div className="container form-container">

@@ -4,6 +4,7 @@ import { axiosInstance } from "../../config";
 import Loading from "../../components/Loading";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
+import { exportExcel } from "../../utils/ExportExcel";
 
 const DonationRequestsBankUser = () => {
   const [donations, setDonations] = useState([]);
@@ -11,7 +12,7 @@ const DonationRequestsBankUser = () => {
   const [reload, setReload] = useState(false);
   const [showDetails, setShowDetails] = useState(null);
 
-  useEffect(() => {
+  const getDonations = () => {
     setLoading(true);
     axiosInstance
       .get(`donations`)
@@ -20,6 +21,10 @@ const DonationRequestsBankUser = () => {
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    getDonations();
   }, [reload]);
 
   const handleApprove = (id) => {
@@ -50,26 +55,7 @@ const DonationRequestsBankUser = () => {
       .get(`export-donations`)
       .then((res) => {
         // console.log(res.data)
-        let apiData = res.data;
-        apiData = apiData.split("\n");
-
-        let dataAoa = [];
-
-        apiData.map((e) => {
-          dataAoa.push(e.split(","));
-        });
-
-        const worksheet = XLSX.utils.aoa_to_sheet(dataAoa);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
-        const excelBuffer = XLSX.write(workbook, {
-          bookType: "xlsx",
-          type: "array",
-        });
-        const blob = new Blob([excelBuffer], {
-          type: "application/octet-stream",
-        });
-        saveAs(blob, "donations.xlsx");
+        exportExcel(res.data,'donations');
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));

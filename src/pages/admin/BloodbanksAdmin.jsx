@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { axiosInstance, token } from "../../config";
+import { axiosInstance } from "../../services/axiosInstance";
 import Loading from "../../components/Loading";
 import { Form, Field, ErrorMessage, Formik } from "formik";
 import * as XLSX from "xlsx";
@@ -10,6 +10,7 @@ import {
   editBloodBank_Schema,
 } from "../../schemas/bloodBank";
 import { exportExcel } from "../../utils/ExportExcel";
+import Pagination from "../../utils/pagination";
 
 const BloodBanksAdmin = () => {
   const [states, setStates] = useState([]);
@@ -21,12 +22,17 @@ const BloodBanksAdmin = () => {
   const [edit, setEdit] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const getBloodBanks =  () => {
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+
+  const getBloodBanks = () => {
     setLoading(true);
     axiosInstance
-      .get(`blood-banks`)
+      .get(`blood-banks?pagination[page]=${currentPage}`)
       .then((res) => {
         setBloodBanks(res?.data?.data);
+        setTotalPages(res.data.meta.pagination.pageCount);
+        setCurrentPage(res.data.meta.pagination.page);
       })
       .catch((err) => console.log(err))
       .finally(() => {
@@ -34,7 +40,7 @@ const BloodBanksAdmin = () => {
       });
   };
 
-  const getStates =  () => {
+  const getStates = () => {
     setLoading(true);
     axiosInstance
       .get(`states`)
@@ -44,7 +50,7 @@ const BloodBanksAdmin = () => {
       .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   };
-  
+
   const handleSubmit = (values) => {
     axiosInstance
       .post(`blood-banks`, {
@@ -76,46 +82,44 @@ const BloodBanksAdmin = () => {
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };
-  
-    const exportBloodBanks = () => {
-      setLoading(true);
-      axiosInstance
-        .get(`export-blood-bank`)
-        .then((res) => {
-            exportExcel(res.data,'blood-banks')
-        })
-        .catch((err) => console.log(err))
-        .finally(() => setLoading(false));
-    };
-  
-    const handleEdit = (values) => {
-      console.log("values for edit are ", values, edit);
-      axiosInstance
-        .put(`blood-banks/${edit.id}`, {
-          data: {
-            name: values.blood_bank_name,
-            phone_number: values.mobile,
-            email: values.email,
-            address: values.address,
-            blood_bank_type: values.blood_bank_type,
-          },
-        })
-        .then((res) => {
-          setEdit(false);
-          setReload(!reload);
-        })
-        .catch((err) => console.log(err));
-    };
-    
+
+  const exportBloodBanks = () => {
+    setLoading(true);
+    axiosInstance
+      .get(`export-blood-bank`)
+      .then((res) => {
+        exportExcel(res.data, "blood-banks");
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  };
+
+  const handleEdit = (values) => {
+    console.log("values for edit are ", values, edit);
+    axiosInstance
+      .put(`blood-banks/${edit.id}`, {
+        data: {
+          name: values.blood_bank_name,
+          phone_number: values.mobile,
+          email: values.email,
+          address: values.address,
+          blood_bank_type: values.blood_bank_type,
+        },
+      })
+      .then((res) => {
+        setEdit(false);
+        setReload(!reload);
+      })
+      .catch((err) => console.log(err));
+  };
 
   useEffect(() => {
     getBloodBanks();
-  }, [reload]);
+  }, [reload, currentPage]);
 
   useEffect(() => {
     getStates();
   }, []);
-
 
   return (
     <>
@@ -185,44 +189,11 @@ const BloodBanksAdmin = () => {
                     </table>
                   </div>
 
-                  <nav aria-label="Page navigation" className="pagination-nav">
-                    <ul className="pagination">
-                      <li className="page-item">
-                        <Link
-                          className="page-link"
-                          to="#"
-                          aria-label="Previous"
-                        >
-                          <span aria-hidden="true">&laquo;</span>
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link active" to="#">
-                          1
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#">
-                          2
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#">
-                          3
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#">
-                          4
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#" aria-label="Next">
-                          <span aria-hidden="true">&raquo;</span>
-                        </Link>
-                      </li>
-                    </ul>
-                  </nav>
+                  <Pagination
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                  />
                 </>
               )}
             </>

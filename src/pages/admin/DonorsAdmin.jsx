@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { axiosInstance } from "../../config";
+import { axiosInstance } from "../../services/axiosInstance";
+
 import Loading from "../../components/Loading";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import { editDonors_Schema } from "../../schemas/donors";
 import { exportExcel } from "../../utils/ExportExcel";
+import Pagination from "../../utils/pagination";
 
 const DonorsAdmin = () => {
   const [donors, setDonors] = useState([]);
@@ -14,12 +16,17 @@ const DonorsAdmin = () => {
   const [reload, setReload] = useState(false);
   const [edit, setEdit] = useState(null);
 
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+
   const getDonors = () => {
     setLoading(true);
     axiosInstance
-      .get(`donors`)
+      .get(`donors?pagination[page]=${currentPage}`)
       .then((res) => {
         setDonors(res.data.data);
+        setTotalPages(res.data.meta.pagination.pageCount);
+        setCurrentPage(res.data.meta.pagination.page);
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -40,7 +47,7 @@ const DonorsAdmin = () => {
       .get(`export-donor`)
       .then((res) => {
         // console.log(res.data)
-        exportExcel(res.data,'donors');
+        exportExcel(res.data, "donors");
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -73,7 +80,7 @@ const DonorsAdmin = () => {
 
   useEffect(() => {
     getDonors();
-  }, [reload]);
+  }, [reload,currentPage]);
 
   return (
     <div className="content-wrapper">
@@ -132,40 +139,11 @@ const DonorsAdmin = () => {
               </table>
             </div>
 
-            <nav aria-label="Page navigation" className="pagination-nav">
-              <ul className="pagination">
-                <li className="page-item">
-                  <Link className="page-link" to="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link active" to="#">
-                    1
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#">
-                    2
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#">
-                    3
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#">
-                    4
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
           </>
         )}
 

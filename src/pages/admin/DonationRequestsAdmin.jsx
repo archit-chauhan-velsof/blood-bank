@@ -1,10 +1,12 @@
 import { React, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { axiosInstance } from "../../config";
+import { axiosInstance } from "../../services/axiosInstance";
+
 import Loading from "../../components/Loading";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { exportExcel } from "../../utils/ExportExcel";
+import Pagination from "../../utils/pagination";
 
 const DonationRequestsAdmin = () => {
   const [donations, setDonations] = useState([]);
@@ -12,12 +14,17 @@ const DonationRequestsAdmin = () => {
   const [reload, setReload] = useState(false);
   const [showDetails, setShowDetails] = useState(null);
 
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+
   const getDonations = () => {
     setLoading(true);
     axiosInstance
-      .get(`donations`)
+      .get(`donations?pagination[page]=${currentPage}`)
       .then((res) => {
         setDonations(res.data.data);
+        setTotalPages(res.data.meta.pagination.pageCount);
+        setCurrentPage(res.data.meta.pagination.page);
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -33,7 +40,7 @@ const DonationRequestsAdmin = () => {
       .get(`export-donations`)
       .then((res) => {
         // console.log(res.data)
-        exportExcel(res.data,'donations');
+        exportExcel(res.data, "donations");
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
@@ -96,40 +103,11 @@ const DonationRequestsAdmin = () => {
               </table>
             </div>
 
-            <nav aria-label="Page navigation" className="pagination-nav">
-              <ul className="pagination">
-                <li className="page-item">
-                  <Link className="page-link" to="#" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link active" to="#">
-                    1
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#">
-                    2
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#">
-                    3
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#">
-                    4
-                  </Link>
-                </li>
-                <li className="page-item">
-                  <Link className="page-link" to="#" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </Link>
-                </li>
-              </ul>
-            </nav>
+            <Pagination
+              totalPages={totalPages}
+              currentPage={currentPage}
+              setCurrentPage={setCurrentPage}
+            />
           </>
         )}
 

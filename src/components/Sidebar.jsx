@@ -2,8 +2,7 @@ import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import useToken from "../custom-hooks/useToken";
 
-const Sidebar = () => {
-  const { resetToken } = useToken();
+const Sidebar = ({resetToken}) => {
   const Navigate = useNavigate();
 
   return (

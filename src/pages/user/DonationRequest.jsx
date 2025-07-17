@@ -1,6 +1,7 @@
 import React from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { axiosInstance } from "../../config";
+import { axiosInstance } from "../../services/axiosInstance";
+
 import { donationRequest_Schema } from "../../schemas/donation";
 
 const DonationRequest = () => {

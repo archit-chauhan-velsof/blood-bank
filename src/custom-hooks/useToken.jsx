@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 
 export default function useToken() {
   const getToken = () => {
@@ -11,14 +11,14 @@ export default function useToken() {
 
   const saveToken = (userToken) => {
     sessionStorage.setItem("token", JSON.stringify(userToken));
-    setToken(userToken.token);
+    setToken(userToken);
   };
 
   const resetToken = () => {
     sessionStorage.removeItem("token");
     setToken();
   };
-
+  console.log('checking', token)
   return {
     resetToken,
     setToken: saveToken,

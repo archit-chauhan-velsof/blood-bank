@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup";
-import { Link } from "react-router-dom";
-import { axiosInstance } from "../../config";
+
+import { axiosInstance } from "../../services/axiosInstance";
+
 import Loading from "../../components/Loading";
 import { searchDonors_Schema } from "../../schemas/donors";
+import Pagination from "../../utils/pagination";
 const SearchDonors = () => {
   const [states, setStates] = useState([]);
   const [districts, setDistricts] = useState([]);
@@ -12,6 +13,9 @@ const SearchDonors = () => {
   const [loading, setLoading] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
+  const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [searchData,setSearchData] = useState({});
 
   // Load states as soon as page loads
   const getStates = () => {
@@ -27,20 +31,41 @@ const SearchDonors = () => {
   useEffect(() => {
     getStates();
   }, []);
+  
 
   const handleSubmit = (values) => {
     setLoading(true);
+    setSearchData(values);
     axiosInstance
       .get(
-        `donors?populate=${values.state}&populate=${values.district}&populate=${values.city}`
+        `donors?populate=${values.state}&populate=${values.district}&populate=${values.city}&pagination[page]=${currentPage}`
       )
       .then((res) => {
         setShowResults(true);
         setSearchResults(res.data.data);
+        setTotalPages(res.data.meta.pagination.pageCount);
+        setCurrentPage(res.data.meta.pagination.page);
       })
       .catch((err) => console.log(err))
       .finally(() => setLoading(false));
   };
+
+  useEffect(()=>{
+    if(currentPage===0) return;
+    setLoading(true);
+    axiosInstance
+      .get(
+        `donors?populate=${searchData.state}&populate=${searchData.district}&populate=${searchData.city}&pagination[page]=${currentPage}`
+      )
+      .then((res) => {
+        setShowResults(true);
+        setSearchResults(res.data.data);
+        setTotalPages(res.data.meta.pagination.pageCount);
+        setCurrentPage(res.data.meta.pagination.page);
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setLoading(false));
+  },[currentPage]);
 
   return (
     <div className="content-wrapper">
@@ -262,44 +287,11 @@ const SearchDonors = () => {
                     </table>
                   </div>
 
-                  <nav aria-label="Page navigation" className="pagination-nav">
-                    <ul className="pagination">
-                      <li className="page-item">
-                        <Link
-                          className="page-link"
-                          to="#"
-                          aria-label="Previous"
-                        >
-                          <span aria-hidden="true">&laquo;</span>
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link active" to="#">
-                          1
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#">
-                          2
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#">
-                          3
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#">
-                          4
-                        </Link>
-                      </li>
-                      <li className="page-item">
-                        <Link className="page-link" to="#" aria-label="Next">
-                          <span aria-hidden="true">&raquo;</span>
-                        </Link>
-                      </li>
-                    </ul>
-                  </nav>
+                  <Pagination
+                    totalPages={totalPages}
+                    currentPage={currentPage}
+                    setCurrentPage={setCurrentPage}
+                  />
                 </>
               )}
             </div>

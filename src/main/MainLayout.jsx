@@ -1,10 +1,10 @@
 import React from "react";
 import { Link, Outlet } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
-import Header from "../../components/Header";
-import Footer from "../../components/Footer";
+import Sidebar from "../components/Sidebar";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
-const MainLayout = () => {
+const MainLayout = ({resetToken}) => {
   return (
     <div className="page-wrapper" data-page-header>
       <div className="sidebar">
@@ -19,7 +19,7 @@ const MainLayout = () => {
           </button>
         </div>
 
-        <Sidebar />
+        <Sidebar resetToken={resetToken}/>
       </div>
       <div className="sidebar-backdrop"></div>
 

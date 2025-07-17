@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ErrorMessage, Field, Formik } from "formik";
 import * as Yup from "yup";
-import { axiosInstanceWithoutToken } from "../../config";
+import { axiosInstanceWithoutToken } from "../../services/axiosInstance";
 import { SIGNUP_URL } from "../../routes/url_constant";
 import { loginSchema } from "../../schemas/loginAndRegister";
+import useToken from "../../custom-hooks/useToken";
 
 const Login = ({ setToken }) => {
-  
+  const [loading,setLoading] = useState(false);
   const handleLogin = (values) => {
+    setLoading(true);
     const formData = new FormData();
     formData.append("identifier", values.user_id);
     formData.append("password", values.password);
@@ -19,7 +21,7 @@ const Login = ({ setToken }) => {
         setToken(res.data.jwt);
         // Navigate('/bloodbanksadmin');
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err)).finally(()=>setLoading(false));
   };
   const Navigate = useNavigate();
   return (
@@ -78,7 +80,7 @@ const Login = ({ setToken }) => {
                     </div>
                     <div className="form-action-area">
                       <button type="submit" className="btn btn-red btn-fluid">
-                        Login
+                        {loading ? `Logging in ...` : 'Log in'}
                       </button>
                     </div>
                   </div>

@@ -1,10 +1,10 @@
 import React, { lazy, Suspense } from "react";
 import { Router, Routes, Route } from "react-router-dom";
-import BloodBanks from "../pages/user/BloodBanks";
-import DonationRequest from "../pages/user/DonationRequest";
-import SearchDonors from "../pages/user/SearchDonors";
-import MainLayout from "../pages/main/MainLayout";
-import RegisterAsDonor from "../pages/user/RegisterAsDonor";
+// import BloodBanks from "../pages/user/BloodBanks";
+// import DonationRequest from "../pages/user/DonationRequest";
+// import SearchDonors from "../pages/user/SearchDonors";
+// import MainLayout from "../main/MainLayout";
+// import RegisterAsDonor from "../pages/user/RegisterAsDonor";
 import Loading from "../components/Loading";
 import {
   BLOOD_BANKS_ADMIN_URL,
@@ -34,11 +34,17 @@ const DonorsBankUser = lazy(() =>
   import("../pages/blood-bank-user/DonorsBankUser")
 );
 
-const AppRoutes = () => {
+const BloodBanks = lazy(() => import("../pages/user/BloodBanks"));
+const DonationRequest = lazy(() => import("../pages/user/DonationRequest"));
+const SearchDonors = lazy(() => import("../pages/user/SearchDonors"));
+const MainLayout = lazy(() => import("../main/MainLayout"));
+const RegisterAsDonor = lazy(() => import("../pages/user/RegisterAsDonor"));
+
+const AppRoutes = ({ resetToken }) => {
   return (
     <Suspense fallback={<Loading />}>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
+        <Route path="/" element={<MainLayout resetToken={resetToken} />}>
           <Route path={BLOOD_BANKS_ADMIN_URL} element={<BloodBanksAdmin />} />
           <Route
             path={DONATION_REQUEST_ADMIN_URL}

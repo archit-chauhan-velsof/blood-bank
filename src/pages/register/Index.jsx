@@ -2,15 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { ErrorMessage, Field, Formik } from "formik";
 import * as Yup from "yup";
-import { axiosInstance, axiosInstanceWithoutToken } from "../../config";
+import {axiosInstanceWithoutToken } from "../../services/axiosInstance";
 import { LOGIN_URL } from "../../routes/url_constant";
 import { registerSchema } from "../../schemas/loginAndRegister";
 
 const Register = () => {
   const Navigate = useNavigate();
+  const [loading,setLoading] = useState(false);
 
   const handleRegister = (values) => {
     // API Logic
+    setLoading(true);
     let formData = new FormData();
     formData.append("email", values.email);
     formData.append("username", values.name);
@@ -27,7 +29,7 @@ const Register = () => {
         console.log(res.data);
         Navigate("/");
       })
-      .catch((err) => console.log(err));
+      .catch((err) => console.log(err)).finally(()=>setLoading(false));
   };
 
   return (
@@ -177,6 +179,7 @@ const Register = () => {
                             id="city"
                             className="form-select"
                           >
+                            <option value="">--city--</option>
                             <option value="1">Hauz Khas</option>
                             <option value="2">Noida Sector 63</option>
                           </Field>
@@ -245,7 +248,7 @@ const Register = () => {
                     </div>
                     <div className="form-action-area">
                       <button type="submit" className="btn btn-red btn-fluid">
-                        Sign up
+                        {loading ? 'Signing up...':'Sign up'}
                       </button>
                     </div>
                   </div>

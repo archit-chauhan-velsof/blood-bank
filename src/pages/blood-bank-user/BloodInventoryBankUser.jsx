@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { axiosInstance } from "../../config";
+import { axiosInstance } from "../../services/axiosInstance";
+
 import Loading from "../../components/Loading";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { addInventory_Schema } from "../../schemas/bloodInventory";

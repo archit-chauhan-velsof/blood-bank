@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Form, Field, ErrorMessage, Formik } from "formik";
-import { axiosInstance } from "../../config";
+import { axiosInstance } from "../../services/axiosInstance";
+
 import { registerDonor_Schema } from "../../schemas/donors";
 
 const RegisterAsDonor = () => {
